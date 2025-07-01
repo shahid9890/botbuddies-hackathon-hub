@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -12,25 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin, Users, Zap, Rocket, Code, Trophy, Plus, Edit, Trash2, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-interface EventType {
-  id: number;
-  name: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  type: string;
-  category: string;
-  maxParticipants: number;
-  currentParticipants: number;
-  prize: string;
-  status: string;
-  organizer: string;
-  image: string;
-}
-
 const Marketing = () => {
-  const [events, setEvents] = useState<EventType[]>([
+  const [events, setEvents] = useState([
     {
       id: 1,
       name: "AI Innovation Summit 2024",
@@ -79,10 +63,10 @@ const Marketing = () => {
     image: ""
   });
 
-  const [editingEvent, setEditingEvent] = useState<EventType | null>(null);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -90,16 +74,11 @@ const Marketing = () => {
     if (editingEvent) {
       setEvents(prev => prev.map(event => 
         event.id === editingEvent.id 
-          ? { 
-              ...event, 
-              ...formData, 
-              maxParticipants: parseInt(formData.maxParticipants) || 100,
-              currentParticipants: event.currentParticipants 
-            }
+          ? { ...event, ...formData, currentParticipants: event.currentParticipants }
           : event
       ));
     } else {
-      const newEvent: EventType = {
+      const newEvent = {
         id: Date.now(),
         ...formData,
         currentParticipants: 0,
@@ -126,7 +105,7 @@ const Marketing = () => {
     setIsDialogOpen(false);
   };
 
-  const handleEdit = (event: EventType) => {
+  const handleEdit = (event) => {
     setEditingEvent(event);
     setFormData({
       name: event.name,
@@ -144,11 +123,11 @@ const Marketing = () => {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (eventId: number) => {
+  const handleDelete = (eventId) => {
     setEvents(prev => prev.filter(event => event.id !== eventId));
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case "Active": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       case "Draft": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";

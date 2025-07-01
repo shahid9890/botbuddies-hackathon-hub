@@ -7,7 +7,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import Index from "./pages/Index";
 import Events from "./pages/Events";
@@ -39,6 +39,18 @@ const App = () => {
     }
   }, []);
 
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    if (newTheme) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -46,7 +58,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <div className="min-h-screen flex flex-col">
-            <Navbar />
+            <Navbar toggleTheme={toggleTheme} isDark={isDark} />
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<Index />} />
