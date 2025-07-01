@@ -232,7 +232,7 @@ const CalendarPage = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .calendar-container :global(.react-calendar) {
           width: 100%;
           background: transparent;
