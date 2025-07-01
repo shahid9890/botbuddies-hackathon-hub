@@ -4,15 +4,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Moon, Sun, Zap } from "lucide-react";
+import { useTheme } from "next-themes";
 
-interface NavbarProps {
-  toggleTheme: () => void;
-  isDark: boolean;
-}
-
-const Navbar = ({ toggleTheme, isDark }: NavbarProps) => {
+const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -28,18 +25,15 @@ const Navbar = ({ toggleTheme, isDark }: NavbarProps) => {
   const isActive = (href: string) => location.pathname === href;
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 neon-border">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-all duration-300 hover:scale-105">
-          <div className="relative">
-            <img 
-              src="/lovable-uploads/2d921375-9aac-4166-bac9-4c649e7cc37a.png" 
-              alt="BotBuddies Logo" 
-              className="h-10 w-10 animate-glow rounded-lg shadow-lg shadow-purple-500/25 border-2 border-purple-500/30"
-            />
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-blue-500/20 animate-pulse-slow"></div>
-          </div>
+        <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+          <img 
+            src="/lovable-uploads/2d921375-9aac-4166-bac9-4c649e7cc37a.png" 
+            alt="BotBuddies Logo" 
+            className="h-10 w-10 animate-glow"
+          />
           <span className="text-xl font-bold text-gradient holographic hidden sm:block">
             BotBuddies
           </span>
@@ -51,9 +45,9 @@ const Navbar = ({ toggleTheme, isDark }: NavbarProps) => {
             <Link
               key={item.href}
               to={item.href}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-accent hover:text-accent-foreground cyber-button ${
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-accent hover:text-accent-foreground ${
                 isActive(item.href)
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 neon-border"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -67,20 +61,17 @@ const Navbar = ({ toggleTheme, isDark }: NavbarProps) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={toggleTheme}
-            className="hover:bg-accent hover:text-accent-foreground cyber-button"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="hover:bg-accent hover:text-accent-foreground"
           >
-            {isDark ? (
-              <Sun className="h-4 w-4 animate-glow" />
-            ) : (
-              <Moon className="h-4 w-4 animate-glow" />
-            )}
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             <span className="sr-only">Toggle theme</span>
           </Button>
           
           <Link to="/join-team">
-            <Button className="hidden sm:flex cyber-button text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-              <Zap className="h-4 w-4 mr-2 animate-pulse" />
+            <Button className="hidden sm:flex cyber-button text-white">
+              <Zap className="h-4 w-4 mr-2" />
               Join Team
             </Button>
           </Link>
@@ -88,41 +79,38 @@ const Navbar = ({ toggleTheme, isDark }: NavbarProps) => {
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="md:hidden cyber-button">
+              <Button variant="ghost" size="sm" className="md:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] neon-border matrix-bg">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] neon-border">
               <div className="flex flex-col space-y-4 mt-8">
                 <div className="flex items-center space-x-3 mb-8">
-                  <div className="relative">
-                    <img 
-                      src="/lovable-uploads/2d921375-9aac-4166-bac9-4c649e7cc37a.png" 
-                      alt="BotBuddies Logo" 
-                      className="h-8 w-8 rounded-lg shadow-lg shadow-purple-500/25 border border-purple-500/30"
-                    />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-blue-500/20 animate-pulse-slow"></div>
-                  </div>
-                  <span className="text-lg font-bold text-gradient holographic">BotBuddies</span>
+                  <img 
+                    src="/lovable-uploads/2d921375-9aac-4166-bac9-4c649e7cc37a.png" 
+                    alt="BotBuddies Logo" 
+                    className="h-8 w-8"
+                  />
+                  <span className="text-lg font-bold text-gradient">BotBuddies</span>
                 </div>
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
                     to={item.href}
                     onClick={() => setIsOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-accent hover:text-accent-foreground cyber-button ${
+                    className={`px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-accent hover:text-accent-foreground ${
                       isActive(item.href)
-                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 neon-border"
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {item.label}
                   </Link>
                 ))}
-                <div className="pt-4 border-t border-purple-500/30">
+                <div className="pt-4 border-t">
                   <Link to="/join-team" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full cyber-button text-white bg-gradient-to-r from-purple-600 to-blue-600">
-                      <Zap className="h-4 w-4 mr-2 animate-pulse" />
+                    <Button className="w-full cyber-button text-white">
+                      <Zap className="h-4 w-4 mr-2" />
                       Join Team
                     </Button>
                   </Link>
