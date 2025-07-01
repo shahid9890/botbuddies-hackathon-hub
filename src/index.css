@@ -96,6 +96,17 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-mono;
   }
+
+  /* Improved mobile scrolling */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Better touch targets for mobile */
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
 }
 
 /* Techy Gradient Backgrounds */
@@ -250,8 +261,23 @@ All colors MUST be HSL.
   position: relative;
   background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
   border: none;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%);
   transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.cyber-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.cyber-button:hover::before {
+  left: 100%;
 }
 
 .cyber-button:hover {
@@ -283,4 +309,55 @@ All colors MUST be HSL.
 @keyframes matrix-rain {
   0% { transform: translateY(-50px); }
   100% { transform: translateY(50px); }
+}
+
+/* Mobile Responsive Improvements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Better touch targets */
+  button, a[role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve text readability on mobile */
+  .text-gradient, .holographic {
+    background-attachment: fixed;
+  }
+  
+  /* Better mobile navbar */
+  nav {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .animate-glow,
+  .animate-pulse,
+  .animate-pulse-slow,
+  .particle,
+  .holographic,
+  .matrix-bg::before {
+    animation: none;
+  }
+  
+  .card-hover:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-gradient,
+  .text-gradient-alt,
+  .holographic {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
 }

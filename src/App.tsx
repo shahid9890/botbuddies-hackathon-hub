@@ -39,18 +39,6 @@ const App = () => {
     }
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -58,7 +46,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <div className="min-h-screen flex flex-col">
-            <Navbar toggleTheme={toggleTheme} isDark={isDark} />
+            <Navbar />
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<Index />} />
