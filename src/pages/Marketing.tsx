@@ -10,126 +10,134 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Megaphone, Target, TrendingUp, Users } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Zap, Rocket, Code, Trophy, Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Marketing = () => {
+  const [events, setEvents] = useState([
+    {
+      id: 1,
+      name: "AI Innovation Summit 2024",
+      description: "Explore the future of artificial intelligence and machine learning",
+      date: "2024-12-15",
+      time: "09:00",
+      location: "Tech Hub, San Francisco",
+      type: "Conference",
+      category: "AI/ML",
+      maxParticipants: 500,
+      currentParticipants: 342,
+      prize: "$100,000",
+      status: "Active",
+      organizer: "TechCorp Inc.",
+      image: "/placeholder.svg"
+    },
+    {
+      id: 2,
+      name: "Blockchain Builders Bootcamp",
+      description: "Learn to build decentralized applications from scratch",
+      date: "2024-12-20",
+      time: "10:00",
+      location: "Innovation Center, Austin",
+      type: "Workshop",
+      category: "Blockchain",
+      maxParticipants: 200,
+      currentParticipants: 156,
+      prize: "$50,000",
+      status: "Active",
+      organizer: "CryptoLearn Ltd.",
+      image: "/placeholder.svg"
+    }
+  ]);
+
   const [formData, setFormData] = useState({
-    companyName: "",
-    contactEmail: "",
-    contactPhone: "",
-    eventName: "",
-    eventType: "",
-    eventDate: "",
-    eventDescription: "",
-    targetAudience: "",
-    budget: "",
-    objectives: "",
-    additionalInfo: ""
+    name: "",
+    description: "",
+    date: "",
+    time: "",
+    location: "",
+    type: "",
+    category: "",
+    maxParticipants: "",
+    prize: "",
+    organizer: "",
+    image: ""
   });
 
-  const handleInputChange = (field: string, value: string) => {
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Marketing request submitted:", formData);
-    // Here you would typically send the data to your backend
+  const handleSubmit = () => {
+    if (editingEvent) {
+      setEvents(prev => prev.map(event => 
+        event.id === editingEvent.id 
+          ? { ...event, ...formData, currentParticipants: event.currentParticipants }
+          : event
+      ));
+    } else {
+      const newEvent = {
+        id: Date.now(),
+        ...formData,
+        currentParticipants: 0,
+        status: "Active",
+        maxParticipants: parseInt(formData.maxParticipants) || 100
+      };
+      setEvents(prev => [...prev, newEvent]);
+    }
+    
+    setFormData({
+      name: "",
+      description: "",
+      date: "",
+      time: "",
+      location: "",
+      type: "",
+      category: "",
+      maxParticipants: "",
+      prize: "",
+      organizer: "",
+      image: ""
+    });
+    setEditingEvent(null);
+    setIsDialogOpen(false);
   };
 
-  const marketingServices = [
-    {
-      icon: <Megaphone className="h-8 w-8 text-primary" />,
-      title: "Event Promotion",
-      description: "Comprehensive marketing campaigns across multiple channels",
-      features: ["Social media campaigns", "Email marketing", "Content creation", "Influencer partnerships"]
-    },
-    {
-      icon: <Target className="h-8 w-8 text-primary" />,
-      title: "Targeted Outreach",
-      description: "Reach your ideal audience with precision targeting",
-      features: ["Audience segmentation", "Personalized messaging", "Multi-channel approach", "A/B testing"]
-    },
-    {
-      icon: <TrendingUp className="h-8 w-8 text-primary" />,
-      title: "Performance Analytics",
-      description: "Track and optimize your marketing performance",
-      features: ["Real-time analytics", "ROI tracking", "Conversion optimization", "Detailed reporting"]
-    },
-    {
-      icon: <Users className="h-8 w-8 text-primary" />,
-      title: "Community Engagement",
-      description: "Build lasting relationships with your target audience",
-      features: ["Community building", "Event networking", "Follow-up campaigns", "Brand loyalty programs"]
-    }
-  ];
+  const handleEdit = (event) => {
+    setEditingEvent(event);
+    setFormData({
+      name: event.name,
+      description: event.description,
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      type: event.type,
+      category: event.category,
+      maxParticipants: event.maxParticipants.toString(),
+      prize: event.prize,
+      organizer: event.organizer,
+      image: event.image
+    });
+    setIsDialogOpen(true);
+  };
 
-  const successStories = [
-    {
-      company: "TechCorp Inc.",
-      event: "AI Innovation Summit",
-      results: "300% increase in registrations",
-      description: "Our targeted campaign helped TechCorp reach 5,000+ developers and achieve record attendance."
-    },
-    {
-      company: "StartupXYZ",
-      event: "Blockchain Workshop Series",
-      results: "150% ROI on marketing spend",
-      description: "Strategic social media campaigns generated 2,000+ qualified leads and 80% conversion rate."
-    },
-    {
-      company: "EduTech Solutions",
-      event: "Student Hackathon",
-      results: "500+ university partnerships",
-      description: "Comprehensive outreach program connected with 500+ universities and 50,000+ students."
-    }
-  ];
+  const handleDelete = (eventId) => {
+    setEvents(prev => prev.filter(event => event.id !== eventId));
+  };
 
-  const pricingTiers = [
-    {
-      name: "Starter",
-      price: "$2,500",
-      description: "Perfect for small events and workshops",
-      features: [
-        "Social media campaign",
-        "Email marketing",
-        "Basic analytics",
-        "1 month campaign duration",
-        "Up to 1,000 target audience"
-      ]
-    },
-    {
-      name: "Professional",
-      price: "$7,500",
-      description: "Ideal for medium-scale hackathons",
-      features: [
-        "Multi-channel campaigns",
-        "Content creation",
-        "Advanced targeting",
-        "3 month campaign duration",
-        "Up to 5,000 target audience",
-        "Performance optimization"
-      ],
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "$15,000+",
-      description: "Comprehensive solution for large events",
-      features: [
-        "Full-service marketing",
-        "Dedicated account manager",
-        "Custom content creation",
-        "6+ month campaigns",
-        "Unlimited audience reach",
-        "Advanced analytics & reporting",
-        "Influencer partnerships"
-      ]
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Active": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      case "Draft": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+      case "Completed": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      default: return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
     }
-  ];
+  };
 
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen py-12 matrix-bg">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -138,334 +146,349 @@ const Marketing = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            Event <span className="text-gradient">Marketing</span> Services
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 holographic">
+            Event <span className="text-gradient">Marketing Hub</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Amplify your hackathon's reach with our comprehensive marketing solutions
+            Create, manage, and promote your hackathons with our advanced event management system
           </p>
         </motion.div>
 
-        {/* Services */}
+        {/* Stats Dashboard */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-16"
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12"
         >
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Our <span className="text-gradient">Services</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {marketingServices.map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
-              >
-                <Card className="h-full border-2 hover:border-primary/50 transition-colors">
-                  <CardHeader className="text-center">
-                    <div className="flex justify-center mb-4">
-                      {service.icon}
-                    </div>
-                    <CardTitle className="text-xl">{service.title}</CardTitle>
-                    <CardDescription>{service.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {service.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-sm">
-                          <div className="w-2 h-2 bg-primary rounded-full"></div>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+          <Card className="card-hover neon-border">
+            <CardContent className="p-6 text-center">
+              <div className="text-3xl font-bold text-gradient mb-2">{events.length}</div>
+              <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Total Events
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="card-hover neon-border">
+            <CardContent className="p-6 text-center">
+              <div className="text-3xl font-bold text-gradient mb-2">
+                {events.reduce((sum, event) => sum + event.currentParticipants, 0)}
+              </div>
+              <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <Users className="h-4 w-4" />
+                Total Participants
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="card-hover neon-border">
+            <CardContent className="p-6 text-center">
+              <div className="text-3xl font-bold text-gradient mb-2">
+                {events.filter(event => event.status === "Active").length}
+              </div>
+              <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <Zap className="h-4 w-4" />
+                Active Events
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="card-hover neon-border">
+            <CardContent className="p-6 text-center">
+              <div className="text-3xl font-bold text-gradient mb-2">
+                {events.reduce((sum, event) => sum + parseInt(event.prize.replace(/[^0-9]/g, '')), 0).toLocaleString()}
+              </div>
+              <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <Trophy className="h-4 w-4" />
+                Total Prize Pool
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
 
-        {/* Success Stories */}
+        {/* Create Event Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-16"
+          className="mb-8"
         >
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Success <span className="text-gradient">Stories</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {successStories.map((story, index) => (
-              <motion.div
-                key={story.company}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                className="cyber-button text-white px-8 py-3 text-lg"
+                onClick={() => {
+                  setEditingEvent(null);
+                  setFormData({
+                    name: "",
+                    description: "",
+                    date: "",
+                    time: "",
+                    location: "",
+                    type: "",
+                    category: "",
+                    maxParticipants: "",
+                    prize: "",
+                    organizer: "",
+                    image: ""
+                  });
+                }}
               >
-                <Card className="h-full border-2 hover:border-primary/50 transition-colors">
-                  <CardHeader>
-                    <CardTitle className="text-xl">{story.company}</CardTitle>
-                    <CardDescription className="font-medium text-primary">
-                      {story.event}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-4">
-                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        {story.results}
-                      </Badge>
-                    </div>
-                    <p className="text-muted-foreground">{story.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+                <Plus className="h-5 w-5 mr-2" />
+                Create New Event
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{editingEvent ? "Edit Event" : "Create New Event"}</DialogTitle>
+                <DialogDescription>
+                  {editingEvent ? "Update your event details" : "Fill in the details to create a new hackathon event"}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Event Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    placeholder="Enter event name"
+                    className="neon-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="organizer">Organizer *</Label>
+                  <Input
+                    id="organizer"
+                    value={formData.organizer}
+                    onChange={(e) => handleInputChange("organizer", e.target.value)}
+                    placeholder="Your company/organization"
+                    className="neon-border"
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="description">Description *</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    placeholder="Describe your event"
+                    className="neon-border h-24"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="date">Date *</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={formData.date}
+                    onChange={(e) => handleInputChange("date", e.target.value)}
+                    className="neon-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="time">Time *</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    value={formData.time}
+                    onChange={(e) => handleInputChange("time", e.target.value)}
+                    className="neon-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location *</Label>
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => handleInputChange("location", e.target.value)}
+                    placeholder="Event location"
+                    className="neon-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="type">Event Type *</Label>
+                  <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
+                    <SelectTrigger className="neon-border">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Hackathon">Hackathon</SelectItem>
+                      <SelectItem value="Workshop">Workshop</SelectItem>
+                      <SelectItem value="Conference">Conference</SelectItem>
+                      <SelectItem value="Bootcamp">Bootcamp</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                    <SelectTrigger className="neon-border">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AI/ML">AI/ML</SelectItem>
+                      <SelectItem value="Blockchain">Blockchain</SelectItem>
+                      <SelectItem value="Web Development">Web Development</SelectItem>
+                      <SelectItem value="Mobile">Mobile</SelectItem>
+                      <SelectItem value="IoT">IoT</SelectItem>
+                      <SelectItem value="Cybersecurity">Cybersecurity</SelectItem>
+                      <SelectItem value="Gaming">Gaming</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxParticipants">Max Participants *</Label>
+                  <Input
+                    id="maxParticipants"
+                    type="number"
+                    value={formData.maxParticipants}
+                    onChange={(e) => handleInputChange("maxParticipants", e.target.value)}
+                    placeholder="100"
+                    className="neon-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="prize">Prize Pool</Label>
+                  <Input
+                    id="prize"
+                    value={formData.prize}
+                    onChange={(e) => handleInputChange("prize", e.target.value)}
+                    placeholder="$10,000"
+                    className="neon-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="image">Event Image URL</Label>
+                  <Input
+                    id="image"
+                    value={formData.image}
+                    onChange={(e) => handleInputChange("image", e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className="neon-border"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 mt-6">
+                <Button 
+                  onClick={handleSubmit}
+                  className="flex-1 cyber-button text-white"
+                  disabled={!formData.name || !formData.description || !formData.date || !formData.organizer}
+                >
+                  <Rocket className="h-4 w-4 mr-2" />
+                  {editingEvent ? "Update Event" : "Create Event"}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDialogOpen(false)}
+                  className="neon-border"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </motion.div>
 
-        {/* Pricing */}
+        {/* Events Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-16"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Marketing <span className="text-gradient">Packages</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pricingTiers.map((tier, index) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
-              >
-                <Card className={`h-full border-2 transition-colors ${
-                  tier.popular ? 'border-primary' : 'hover:border-primary/50'
-                } relative`}>
-                  {tier.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
-                    </div>
-                  )}
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">{tier.name}</CardTitle>
-                    <div className="text-3xl font-bold text-primary mb-2">{tier.price}</div>
-                    <CardDescription>{tier.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {tier.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-sm">
-                          <div className="w-2 h-2 bg-primary rounded-full"></div>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button className="w-full mt-6 gradient-bg">
-                      Get Started
+          {events.map((event, index) => (
+            <motion.div
+              key={event.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+            >
+              <Card className="h-full card-hover neon-border circuit-lines">
+                <CardHeader>
+                  <div className="flex justify-between items-start mb-2">
+                    <Badge variant="outline" className="animate-glow">
+                      {event.type}
+                    </Badge>
+                    <Badge className={getStatusColor(event.status)}>
+                      {event.status}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-xl mb-2 text-gradient">{event.name}</CardTitle>
+                  <CardDescription>{event.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    {new Date(event.date).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    {event.time}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="h-4 w-4" />
+                    {event.location}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                    {event.currentParticipants}/{event.maxParticipants} participants
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <Badge className="text-gradient-alt font-bold">
+                      {event.category}
+                    </Badge>
+                    <span className="text-lg font-bold text-gradient">{event.prize}</span>
+                  </div>
+                  
+                  <div className="text-xs text-muted-foreground">
+                    Organized by {event.organizer}
+                  </div>
+                  
+                  <div className="flex gap-2 mt-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1 neon-border"
+                      onClick={() => handleEdit(event)}
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
                     </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Request Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <Card className="max-w-4xl mx-auto border-2">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl">Request Marketing Services</CardTitle>
-              <CardDescription className="text-lg">
-                Tell us about your event and we'll create a custom marketing strategy
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">Company Name *</Label>
-                    <Input
-                      id="companyName"
-                      value={formData.companyName}
-                      onChange={(e) => handleInputChange("companyName", e.target.value)}
-                      placeholder="Your company name"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="contactEmail">Contact Email *</Label>
-                    <Input
-                      id="contactEmail"
-                      type="email"
-                      value={formData.contactEmail}
-                      onChange={(e) => handleInputChange("contactEmail", e.target.value)}
-                      placeholder="your.email@company.com"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="contactPhone">Contact Phone</Label>
-                    <Input
-                      id="contactPhone"
-                      value={formData.contactPhone}
-                      onChange={(e) => handleInputChange("contactPhone", e.target.value)}
-                      placeholder="+1 (555) 123-4567"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="eventType">Event Type *</Label>
-                    <Select
-                      value={formData.eventType}
-                      onValueChange={(value) => handleInputChange("eventType", value)}
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="neon-border"
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select event type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="hackathon">Hackathon</SelectItem>
-                        <SelectItem value="workshop">Workshop</SelectItem>
-                        <SelectItem value="conference">Conference</SelectItem>
-                        <SelectItem value="bootcamp">Bootcamp</SelectItem>
-                        <SelectItem value="competition">Competition</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="eventName">Event Name *</Label>
-                    <Input
-                      id="eventName"
-                      value={formData.eventName}
-                      onChange={(e) => handleInputChange("eventName", e.target.value)}
-                      placeholder="Your event name"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="eventDate">Event Date *</Label>
-                    <Input
-                      id="eventDate"
-                      type="date"
-                      value={formData.eventDate}
-                      onChange={(e) => handleInputChange("eventDate", e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="eventDescription">Event Description *</Label>
-                  <Textarea
-                    id="eventDescription"
-                    value={formData.eventDescription}
-                    onChange={(e) => handleInputChange("eventDescription", e.target.value)}
-                    placeholder="Describe your event, goals, and what makes it unique..."
-                    className="min-h-[100px]"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="targetAudience">Target Audience *</Label>
-                    <Select
-                      value={formData.targetAudience}
-                      onValueChange={(value) => handleInputChange("targetAudience", value)}
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => handleDelete(event.id)}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select target audience" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="high-school">High School Students</SelectItem>
-                        <SelectItem value="college">College Students</SelectItem>
-                        <SelectItem value="professionals">Professionals</SelectItem>
-                        <SelectItem value="mixed">Mixed Audience</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="budget">Marketing Budget *</Label>
-                    <Select
-                      value={formData.budget}
-                      onValueChange={(value) => handleInputChange("budget", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select budget range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="under-5k">Under $5,000</SelectItem>
-                        <SelectItem value="5k-15k">$5,000 - $15,000</SelectItem>
-                        <SelectItem value="15k-50k">$15,000 - $50,000</SelectItem>
-                        <SelectItem value="over-50k">Over $50,000</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="objectives">Marketing Objectives *</Label>
-                  <Textarea
-                    id="objectives"
-                    value={formData.objectives}
-                    onChange={(e) => handleInputChange("objectives", e.target.value)}
-                    placeholder="What are your main marketing goals? (e.g., increase registrations, brand awareness, lead generation)"
-                    className="min-h-[80px]"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="additionalInfo">Additional Information</Label>
-                  <Textarea
-                    id="additionalInfo"
-                    value={formData.additionalInfo}
-                    onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
-                    placeholder="Any additional details, special requirements, or questions..."
-                    className="min-h-[80px]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="eventImage">Event Image/Logo</Label>
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-                    <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Upload your event logo or promotional image
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      PNG, JPG, or SVG (max 5MB)
-                    </p>
-                    <Button variant="outline" className="mt-2">
-                      Choose File
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
-                </div>
-
-                <Button type="submit" className="w-full gradient-bg text-lg py-6">
-                  Submit Marketing Request
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </motion.div>
+
+        {events.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <Code className="h-16 w-16 mx-auto mb-4 text-muted-foreground animate-pulse-slow" />
+            <h3 className="text-2xl font-semibold mb-4 text-gradient">No events created yet</h3>
+            <p className="text-muted-foreground">
+              Start by creating your first hackathon event
+            </p>
+          </motion.div>
+        )}
       </div>
     </div>
   );
